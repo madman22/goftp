@@ -5,6 +5,8 @@ Golang FTP library with Walk support.
 
 ## Features
 
+
+* Forked from dutchcoders/goftp to support using an existing connection
 * AUTH TLS support
 * Walk 
 

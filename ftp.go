@@ -21,7 +21,7 @@ var RePwdPath = regexp.MustCompile(`\"(.*)\"`)
 // FTP is a session for File Transfer Protocol
 type FTP struct {
 	Dial DialFunc
-	
+
 	conn net.Conn
 
 	addr string
@@ -39,13 +39,13 @@ func (ftp *FTP) Close() error {
 }
 
 type (
-// WalkFunc is called on each path in a Walk. Errors are filtered through WalkFunc
+	// WalkFunc is called on each path in a Walk. Errors are filtered through WalkFunc
 	WalkFunc func(path string, info os.FileMode, err error) error
 
-// RetrFunc is passed to Retr and is the handler for the stream received for a given path
+	// RetrFunc is passed to Retr and is the handler for the stream received for a given path
 	RetrFunc func(r io.Reader) error
-	
-// DialFunc is called instead of net.Dial if it is set on the ftp struct
+
+	// DialFunc is called instead of net.Dial if it is set on the ftp struct
 	DialFunc func(string, string) (net.Conn, error)
 )
 
@@ -272,13 +272,13 @@ func (ftp *FTP) Type(t TypeCode) error {
 type TypeCode string
 
 const (
-// TypeASCII for ASCII
+	// TypeASCII for ASCII
 	TypeASCII = "A"
-// TypeEBCDIC for EBCDIC
+	// TypeEBCDIC for EBCDIC
 	TypeEBCDIC = "E"
-// TypeImage for an Image
+	// TypeImage for an Image
 	TypeImage = "I"
-// TypeLocal for local byte size
+	// TypeLocal for local byte size
 	TypeLocal = "L"
 )
 
@@ -531,8 +531,8 @@ func (ftp *FTP) Stat(path string) ([]string, error) {
 		return nil, err
 	}
 	if !strings.HasPrefix(stat, StatusFileStatus) &&
-	!strings.HasPrefix(stat, StatusDirectoryStatus) &&
-	!strings.HasPrefix(stat, StatusSystemStatus) {
+		!strings.HasPrefix(stat, StatusDirectoryStatus) &&
+		!strings.HasPrefix(stat, StatusSystemStatus) {
 		return nil, errors.New(stat)
 	}
 	if strings.HasPrefix(stat, StatusSystemStatus) {
@@ -742,6 +742,16 @@ func Connect(addr string) (*FTP, error) {
 	return UseConnection(addr, conn)
 }
 
+// Connect to server at addr (format "host:port") with DialTimeout with the given duration. debug is OFF
+func ConnectTimeout(addr string, dur time.Duration) (*FTP, error) {
+	//conn, err := net.Dial("tcp", addr)
+	conn, err := net.DialTimeout("tcp", addr, dur)
+	if err != nil {
+		return nil, err
+	}
+	return UseConnection(addr, conn)
+}
+
 // ConnectDbg to server at addr (format "host:port"). debug is ON
 func ConnectDbg(addr string) (*FTP, error) {
 	conn, err := net.Dial("tcp", addr)
@@ -780,4 +790,3 @@ func (ftp *FTP) Size(path string) (size int, err error) {
 
 	return strconv.Atoi(line[4 : len(line)-2])
 }
-
